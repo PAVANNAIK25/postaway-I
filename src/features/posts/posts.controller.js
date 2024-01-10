@@ -5,7 +5,6 @@ export default class PostsController {
 
     static posts(req, res) {
         const userId = req.body.userId;
-        console.log(userId);
         const result = PostsModel.getPosts(userId);
         if (result) {
             return res.status(200).send(result);
@@ -48,7 +47,8 @@ export default class PostsController {
 
     static updatePost(req, res){
         const postId = req.params.id;
-        const {userId, caption, imageUrl} = req.body;
+        const userId = req.body;
+        const {caption, imageUrl} = req.params;
 
         try{
             const post = PostsModel.updatePost(postId, userId, caption, imageUrl);
