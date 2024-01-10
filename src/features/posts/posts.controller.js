@@ -1,24 +1,25 @@
-import PostsModel from "./posts.model";
+import PostsModel from "./posts.model.js";
 
 
 export default class PostsController {
 
     static posts(req, res) {
         const userId = req.body.userId;
+        console.log(userId);
         const result = PostsModel.getPosts(userId);
         if (result) {
-            return res.send(200).send(result);
+            return res.status(200).send(result);
         }
-        res.send(404).json({ message: "post not found with logged in user" });
+        res.status(404).json({ error: "post not found with logged in user" });
     }
 
     static allPosts(req, res) {
         const result = PostsModel.getAllPosts();
         if (!result) {
-            return res.send(400).json({ message: "post not found" });
+            return res.status(400).json({ error: "post not found" });
         }
 
-        return res.send(200).send(result);
+        return res.status(200).send(result);
     }
 
     static createPost(req, res){
@@ -28,7 +29,7 @@ export default class PostsController {
             const post = PostsModel.addPost(userId, caption, imageUrl); 
             return res.status(201).json(post);
         }catch(err){
-            res.status(500).send(err);
+            res.status(500).send({error: err.message});
         }
     }
 
@@ -40,7 +41,7 @@ export default class PostsController {
             return res.status(200).json(post);
 
         }catch(err){
-            res.status(400).json({message: "Cannot retrive requested post"});
+            res.status(400).json({error: err.message});
         }
 
     }
@@ -50,11 +51,24 @@ export default class PostsController {
         const {userId, caption, imageUrl} = req.body;
 
         try{
-            const post = PostsModel.getPostById(postId, userId, caption, imageUrl);
+            const post = PostsModel.updatePost(postId, userId, caption, imageUrl);
             return res.status(200).json(post);
 
         }catch(err){
-            res.status(400).json({message: "Cannot retrive requested post"});
+            res.status(400).json({error: err.message});
+        }
+
+    }
+
+    static deletePost(req, res){
+        const postId = req.params.id;
+        const userId = req.body.userId;
+
+        try{
+            const deletedItem = PostsModel.deletePost(postId, userId);
+            return res.status(202).send({message: "Post deleted successfully", deletedItem: deletedItem});
+        }catch(err){
+            res.status(400).send({error: err.message});
         }
 
     }

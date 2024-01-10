@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-let id=1;
+let id=2;
 export default class UserModel{
 
     constructor(name, email, password){
@@ -42,4 +42,9 @@ let users = [{
     name:"Pavan Naik",
     email:"pavan@gmail.com",
     password:"pavanN"
+},{
+    userId:2,
+    name:"john doe",
+    email:"john@gmail.com",
+    password:"johnDoe"
 }]  
