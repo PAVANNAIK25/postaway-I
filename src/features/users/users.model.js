@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import ApplicationError from '../../error-handler/applicationError.js';
 
 let id=2;
 export default class UserModel{
@@ -30,8 +31,17 @@ export default class UserModel{
             });
             return {message: "login Successful", token: token};
         }else{
-            return {message: "Invalid credentials"};
+            throw new ApplicationError("Invalid credentials", 400);
         }
+    }
+
+    static getUserById(userId){
+        const user  = users.find(u => u.userId == userId);
+        if(!user){
+            throw new ApplicationError("User not found!", 400);
+        }
+
+        return user;
     }
 
     

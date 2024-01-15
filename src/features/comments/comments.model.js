@@ -1,5 +1,6 @@
+import ApplicationError from "../../error-handler/applicationError.js";
 
-let id=1;
+let id=100;
 export default class CommentsModel{
     constructor(userId, postId, content){
         this.commentId = ++id;
@@ -8,10 +9,11 @@ export default class CommentsModel{
         this.content = content;
     }
     
+    
     static get(postId){
         const result = comments.filter(c => c.postId == postId);
-        if(!result){
-            return ({message:"No comments found"});
+        if(result.length == 0){
+            throw new ApplicationError("No comments found", 400);
         }
         return result;
     }
@@ -25,7 +27,7 @@ export default class CommentsModel{
     static update(commentId, userId, content){
         const comment = comments.find(c => c.commentId==commentId && c.userId==userId);
         if(!comment){
-            throw new Error("No comment found");
+            throw new ApplicationError("No comment found", 400);
         }
         comment.content = content;
         return comment;
@@ -35,8 +37,8 @@ export default class CommentsModel{
     static delete(commentId, userId){
         const commentIndex = comments.findIndex(c => c.commentId==commentId && c.userId==userId);
         
-        if(!commentIndex){
-            throw new Error("No comment found");
+        if(commentIndex < 0){
+            throw new ApplicationError("No comment found", 400);
         }
         const deletedComment = comments.splice(commentIndex, 1);
 

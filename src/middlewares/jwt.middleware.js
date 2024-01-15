@@ -12,7 +12,7 @@ export const jwtAuth = (req, res, next)=>{
         req.body.userId = payload.user;
         next();
     }catch(err){
-        return res.status(400).json({error: err});
+        return res.status(400).json({error: err.message});
     }
 
 }
