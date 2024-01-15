@@ -20,7 +20,8 @@ export default class UserController{
             const result = UserModel.confirmLogin(email,password);
             return res.status(200).json(result);
         }catch(error){
-            res.status(404).send("User not found");
+            next(error);
+            // res.status(404).send("User not found");
         }
         
     }

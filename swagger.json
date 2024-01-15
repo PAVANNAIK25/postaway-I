@@ -1,0 +1,451 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Postaway -I",
+        "description": "Provides API for social network applications",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "JWT": {
+                "in": "header",
+                "name": "Authorization",
+                "type": "apiKey"
+            }
+        },
+        "schemas": {
+            "posts": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "type": "number"
+                    },
+                    "pageCount": {
+                        "type": "number"
+                    },
+                    "posts": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number"
+                                },
+                                "userId": {
+                                    "type": "number"
+                                },
+                                "caption": {
+                                    "type": "string"
+                                },
+                                "imageUrl": {
+                                    "type": "string"
+                                },
+                                "date": {
+                                    "type": "string"
+                                },
+                                "draft": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "draft-archive": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "posts": {
+                        "type": "object",
+                        "properties": {
+                            "postId": {
+                                "type": "number"
+                            },
+                            "userId": {
+                                "type": "number"
+                            },
+                            "caption": {
+                                "type": "string"
+                            },
+                            "imageUrl": {
+                                "type": "string"
+                            },
+                            "date": {
+                                "type": "string"
+                            },
+                            "archive": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/api/users/login": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Login to application",
+                "description": "Login to use the application",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid Credentials"
+                    }
+                }
+            }
+        },
+        "/api/users/register": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register to get API access",
+                "description": "Register to use the application",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/posts/all": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Retrive all posts",
+                "description": "Retrives all posts irrespective of logged in user",
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/posts"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "post not found"
+                    }
+                }
+            }
+        },
+        "/api/posts/": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Retrive posts based on user",
+                "description": "Retrives posts based on logged in user",
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/posts"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Add a post",
+                "description": "post request to add post on social media",
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "caption": {
+                                        "type": "string"
+                                    },
+                                    "imageUrl": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "postId": {
+                                            "type": "number"
+                                        },
+                                        "userId": {
+                                            "type": "number"
+                                        },
+                                        "caption": {
+                                            "type": "string"
+                                        },
+                                        "imageUrl": {
+                                            "type": "string"
+                                        },
+                                        "date": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/api/posts/draft": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Retrive all draft posts",
+                "description": "Retrives all draft posts based on user",
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "page": {
+                                            "type": "number"
+                                        },
+                                        "pageCount": {
+                                            "type": "number"
+                                        },
+                                        "posts": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "number"
+                                                },
+                                                "userId": {
+                                                    "type": "number"
+                                                },
+                                                "caption": {
+                                                    "type": "string"
+                                                },
+                                                "imageUrl": {
+                                                    "type": "string"
+                                                },
+                                                "date": {
+                                                    "type": "string"
+                                                },
+                                                "draft": {
+                                                    "type": "boolean"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No draft found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Save as draft",
+                "description": "post request to save the post as draft",
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "caption": {
+                                        "type": "string"
+                                    },
+                                    "imageUrl": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/draft-archive"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/api/posts/archive": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Retrive all archive posts",
+                "description": "Retrives all archive posts by user",
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All achived posts by logged in user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/posts"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "resource not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Save post to archive",
+                "description": "post request to save the post to archive",
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "postId",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "description": "Enter post ID of the post which you want to save to archive"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/draft-archive"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        }
+
+    }
+}
